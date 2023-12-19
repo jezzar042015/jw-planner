@@ -51,8 +51,12 @@
             <!-- <div> {{ sched }}</div> -->
             <div class="dayheader"> {{ getDayHeader() }}</div>
             <div class="field" v-show="isFutureDate">
-                <label for="">Plan: </label>
+                <div class="fld-lbl">
+                    <img src="../assets//svg/schedule.svg" alt="">
+                    <label for="">Plan: </label>
+                </div>
                 <input type="number" v-model="sched.p">
+                
             </div>
             <div class="field" v-show="!isFutureDate">
                 <label for="">Actual: </label>
@@ -274,15 +278,19 @@ export default {
     display: flex;
     align-items: center;
     padding: 12px 0 0;
-    font-size: 15px;
+    font-size: 12px;
     font-weight: 400;
     gap: 5px;
 
 }
 
+.target span, .schedule span {
+    font-size: 12px;
+}
+
 .sum-hrs
 {
-    font-size: 22px;
+    font-size: 16px;
     font-weight: 600;
 }
 
@@ -329,9 +337,14 @@ export default {
     display: flex;
     flex-flow: row;
     align-items: baseline;
-    gap: 20px;
+    gap: 16px;
 }
 
+.fld-lbl {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
 .ta-field
 {
     display: flex;
