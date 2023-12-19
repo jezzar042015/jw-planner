@@ -4,9 +4,7 @@
             {{ profile.name}}
         </div>
         <div @click="$emit('setView', 'profile')">
-            <span class="material-symbols-outlined">
-                account_circle
-            </span>
+            <img src="../assets/svg/account_circle.svg" alt="" class="icon-profile">
         </div>
     </div>
     <div class="rank">
@@ -52,6 +50,10 @@ export default {
 
 .months-list {
     margin-top: 30px;
+}
+
+.icon-profile {
+    height: 40px;
 }
 
 
