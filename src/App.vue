@@ -25,6 +25,16 @@ const calendar = {
   '12': 'December'
 }
 
+const weekDays = {
+  '1': { 'ddd': 'Sunday', 'dd': 'Sun'},
+  '2': { 'ddd': 'Monday', 'dd': 'Mon'},
+  '3': { 'ddd': 'Tuesday', 'dd': 'Tue'},
+  '4': { 'ddd': 'Wednesday', 'dd': 'Wed'},
+  '5': { 'ddd': 'Thursday', 'dd': 'Thu'},
+  '6': { 'ddd': 'Friday', 'dd': 'Fri'},
+  '0': { 'ddd': 'Saturday', 'dd': 'Sat'},
+}
+
 export default {
   components: {
     ProfileForm,
@@ -43,10 +53,14 @@ export default {
         rank: null
       },
       months: [
-        { p: '2403', d: { 2: { p: 3, a: 2 }, 9: { p: 3, a: 2 } } },
-        { p: '2402', d: { 5: { p: 3, a: 2 } } },
-        { p: '2401', d: { 5: { p: 3, a: 2 } } },
-        { p: '2312', d: { 5: { p: 3, a: 2 } } },
+        {
+          p: '2403',
+          d: { 2: { p: 3, a: 2 }, 9: { p: 3, a: 2 } },
+          t: 50, s: {s: 6, a: 0}
+        },
+        { p: '2402', d: { 5: { p: 3, a: 2 } }, t: 50, s: {s: 0, a: 0} },
+        { p: '2401', d: { 5: { p: 3, a: 2 } }, t: 50, s: {s: 0, a: 0} },
+        { p: '2312', d: { 5: { p: 3, a: 2 } }, t: 50, s: {s: 0, a: 0} },
       ]
     }
   },
@@ -78,6 +92,7 @@ export default {
       loadMonth: this.loadMonth,
       setView: this.setView,
       calendar,
+      weekDays,
     }
   },
   watch: {

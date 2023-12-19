@@ -1,6 +1,7 @@
 <template>
     <div class="mo" @click="activateMonth">
-        {{ displayProper }}
+        <span> <img src="../assets/svg/calendar_month.svg" alt="" class="icon-cal"></span>
+        <span>{{ displayProper }}</span> 
     </div>
 </template>
 
@@ -32,14 +33,19 @@ export default {
 <style scoped>
 .mo:first-child
 {
-    border-top: 1px solid #cecece;
+    border-top: 1px dotted #cecece;
 }
 
 .mo
 {
     display: flex;
     padding: 20px 10px;
-    border-bottom: 1px solid #cecece;
+    border-bottom: 1px dotted #cecece;
     user-select: none;
+    gap: 10px;
+}
+
+.icon-cal {
+    height: 25px;
 }
 </style>

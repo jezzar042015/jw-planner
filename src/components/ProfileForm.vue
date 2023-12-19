@@ -4,9 +4,7 @@
             Profile
         </div>
         <div v-show="hasValidProfile" @click="$emit('setView', 'main')">
-            <span class="material-symbols-outlined">
-                close
-            </span>
+            <img class="close-profile" src="../assets/svg/close.svg" alt="">
         </div>
     </div>
     <div class="content">
@@ -70,4 +68,9 @@ export default {
     background: transparent;
     width: 100%;
     box-sizing: border-box;
-}</style>
+}
+
+.close-profile {
+    height: 30px;
+}
+</style>
