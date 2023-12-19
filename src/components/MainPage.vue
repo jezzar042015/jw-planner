@@ -12,7 +12,7 @@
     </div>
     <div class="months-list">
         <template v-for="m in months" :key="m.p" >
-            <PeriodItem :month="m"></PeriodItem>
+            <PeriodItem :month="m" @set-view="setView"></PeriodItem>
         </template>
     </div>
 </template>
@@ -36,6 +36,11 @@ export default {
             return ranks[this.profile.rank]
         },
 
+    },
+    methods: {
+        setView(n) {
+            this.$emit('setView', n)
+        }
     }
 }
 </script>

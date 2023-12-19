@@ -1,7 +1,7 @@
 <template>
     <div class="mo" @click="activateMonth">
         <span> <img src="../assets/svg/calendar_month.svg" alt="" class="icon-cal"></span>
-        <span>{{ displayProper }}</span> 
+        <span>{{ displayProper }}</span>
     </div>
 </template>
 
@@ -19,12 +19,12 @@ export default {
         }
     },
     inject: [
-        'loadMonth', 'calendar', 'setView'
+        'loadMonth', 'calendar'
     ],
     methods: {
         async activateMonth() {
             await this.loadMonth(this.month)
-            this.setView('cal')
+            this.$emit('setView', 'cal')
         }
     }
 }
@@ -45,7 +45,8 @@ export default {
     gap: 10px;
 }
 
-.icon-cal {
+.icon-cal
+{
     height: 25px;
 }
 </style>

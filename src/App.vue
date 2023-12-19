@@ -1,7 +1,8 @@
 <template>
-  <ProfileForm v-if="view.live === 'profile'" :profile="profile" @set-view="setView"></ProfileForm>
+  <ProfileForm v-if="view.live === 'profile'" :profile="profile" @set-view="setView" @store-reset="storeReset">
+  </ProfileForm>
   <MainPage v-if="view.live === 'main'" :profile="profile" :months="months" @set-view="setView"></MainPage>
-  <CalendarMonth v-if="view.live === 'cal'" :month="month"></CalendarMonth>
+  <CalendarMonth v-if="view.live === 'cal'" :month="month" @set-view="setView" @save-date="saveDate"></CalendarMonth>
 </template>
 
 
@@ -26,13 +27,13 @@ const calendar = {
 }
 
 const weekDays = {
-  '1': { 'ddd': 'Sunday', 'dd': 'Sun'},
-  '2': { 'ddd': 'Monday', 'dd': 'Mon'},
-  '3': { 'ddd': 'Tuesday', 'dd': 'Tue'},
-  '4': { 'ddd': 'Wednesday', 'dd': 'Wed'},
-  '5': { 'ddd': 'Thursday', 'dd': 'Thu'},
-  '6': { 'ddd': 'Friday', 'dd': 'Fri'},
-  '0': { 'ddd': 'Saturday', 'dd': 'Sat'},
+  '1': { 'ddd': 'Sunday', 'dd': 'Sun' },
+  '2': { 'ddd': 'Monday', 'dd': 'Mon' },
+  '3': { 'ddd': 'Tuesday', 'dd': 'Tue' },
+  '4': { 'ddd': 'Wednesday', 'dd': 'Wed' },
+  '5': { 'ddd': 'Thursday', 'dd': 'Thu' },
+  '6': { 'ddd': 'Friday', 'dd': 'Fri' },
+  '0': { 'ddd': 'Saturday', 'dd': 'Sat' },
 }
 
 export default {
@@ -52,25 +53,44 @@ export default {
         name: null,
         rank: null
       },
-      months: [
-        {
-          p: '2403',
-          d: { 2: { p: 3, a: 2 }, 9: { p: 3, a: 2 } },
-          t: 50, s: {s: 6, a: 0}
-        },
-        { p: '2402', d: { 5: { p: 3, a: 2 } }, t: 50, s: {s: 0, a: 0} },
-        { p: '2401', d: { 5: { p: 3, a: 2 } }, t: 50, s: {s: 0, a: 0} },
-        { p: '2312', d: { 5: { p: 3, a: 2 } }, t: 50, s: {s: 0, a: 0} },
-      ]
+      months: []
     }
   },
   async mounted() {
     const prof = await this.getStored('prof')
-    if (prof) {
+    const months = await this.getStored('months')
+
+    if (prof && prof.name != null && prof.rank != null) {
       this.profile = prof
     } else {
       this.view.live = 'profile'
     }
+
+    if (months) {
+      this.months = months
+    } else {
+      this.months = [
+        {
+          p: '2403',
+          d: {
+            // 2: { p: 3, a: 2, n: null }, 9: { p: 3, a: 2, n: null }
+          }, t: 50, s: { s: 0, a: 0 }
+        },
+        {
+          p: '2402', d: {}, t: 50, s: { s: 0, a: 0, n: null }
+        },
+        {
+          p: '2401', d: {}, t: 50, s: { s: 0, a: 0, n: null }
+        },
+        {
+          p: '2312', d: {}, t: 50, s: { s: 0, a: 0, n: null }
+        },
+        {
+          p: '2311', d: {}, t: 50, s: { s: 0, a: 0, n: null }
+        },
+      ]
+    }
+
   },
   methods: {
     setView(view) {
@@ -79,18 +99,38 @@ export default {
     async loadMonth(p) {
       this.month = p
     },
+    async saveDate(month, date, d) {
+      for (let i = 0; i < this.months.length; i++) {
+        const m = this.months[i];
+        if (m.p == month) {
+          m.d[date] = d;
+          return;
+        }
+      }
+    },
     storeProfile() {
       localStorage.setItem('prof', JSON.stringify(this.profile))
+    },
+    storeMonths() {
+      localStorage.setItem('months', JSON.stringify(this.months))
     },
     async getStored(key) {
       const v = localStorage.getItem(key)
       return (v) ? JSON.parse(v) : null
+    },
+    storeReset() {
+      this.profile = {
+        name: null,
+        rank: null
+      }
+
+      localStorage.removeItem('prof')
+      localStorage.removeItem('months')
     }
   },
   provide() {
     return {
       loadMonth: this.loadMonth,
-      setView: this.setView,
       calendar,
       weekDays,
     }
@@ -98,6 +138,10 @@ export default {
   watch: {
     profile: {
       handler: 'storeProfile',
+      deep: true
+    },
+    months: {
+      handler: 'storeMonths',
       deep: true
     }
   }
