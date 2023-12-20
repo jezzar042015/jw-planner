@@ -36,11 +36,8 @@
             <div class="dayname">S</div>
             <div v-for="d in days" :key="d.c" class="date" @click.stop="setSched(d)">
                 <div class="dateno">{{ d.d }}</div>
-                <div class="hrs plan">
-                    {{ d.p }}
-                </div>
-                <div class="hrs actual">
-                    {{ d.a }}
+                <div>
+                    <CalendarDate :day="d"></CalendarDate>
                 </div>
             </div>
 
@@ -53,17 +50,16 @@
             <div class="field" v-show="isFutureDate">
                 <div class="fld-lbl">
                     <img src="../assets//svg/schedule.svg" alt="">
-                    <label for="">Plan: </label>
+                    <label for="">Plan:</label>
                 </div>
                 <input type="number" v-model="sched.p">
-                
             </div>
             <div class="field" v-show="!isFutureDate">
-                <label for="">Actual: </label>
+                <label for="">Actual:</label>
                 <input type="number" v-model="sched.a">
             </div>
             <div class="ta-field">
-                <label for="">Notes: </label>
+                <label for="">Notes:</label>
                 <textarea v-model="sched.n"></textarea>
             </div>
         </div>
@@ -71,6 +67,8 @@
 </template>
 
 <script>
+import CalendarDate from './CalendarDate.vue'
+
 export default {
     data() {
         return {
@@ -78,6 +76,9 @@ export default {
             view: '',
             sched: { a: 0, p: 0 },
         }
+    },
+    components: {
+        CalendarDate
     },
     async mounted() {
         const fd = await this.getMonthProps()
@@ -226,7 +227,7 @@ export default {
 .date
 {
     background-color: white;
-    height: 80px;
+    min-height: 55px;
     font-size: 9px;
     font-weight: 300;
     text-align: left;
@@ -238,28 +239,6 @@ export default {
     flex-flow: column;
 }
 
-.hrs
-{
-    font-size: 22px;
-    font-weight: 600;
-    text-align: center;
-
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.plan
-{
-    color: rgb(158, 158, 158);
-}
-
-.actual
-{
-    color: rgb(1, 1, 136);
-
-}
 
 .close-calendar
 {
@@ -284,7 +263,9 @@ export default {
 
 }
 
-.target span, .schedule span {
+.target span,
+.schedule span
+{
     font-size: 12px;
 }
 
@@ -340,11 +321,13 @@ export default {
     gap: 16px;
 }
 
-.fld-lbl {
+.fld-lbl
+{
     display: flex;
     align-items: center;
     gap: 8px;
 }
+
 .ta-field
 {
     display: flex;
