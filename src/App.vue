@@ -1,5 +1,6 @@
 <template>
-  <ProfileForm v-if="view.live === 'profile'" :profile="profile" @set-view="setView" @store-reset="storeReset">
+  <ProfileForm v-if="view.live === 'profile'" :profile="profile" :months="months" @set-view="setView"
+    @store-reset="storeReset" @optimize-store="optimizeMonthsStore" @backup="restoreBackup">
   </ProfileForm>
   <MainPage v-if="view.live === 'main'" :profile="profile" :months="months" @set-view="setView"></MainPage>
   <CalendarMonth v-if="view.live === 'cal'" :month="month" @set-view="setView" @save-date="saveDate"></CalendarMonth>
@@ -53,7 +54,8 @@ export default {
         name: null,
         rank: null
       },
-      months: []
+      months: [],
+      holdStore: false,
     }
   },
   async mounted() {
@@ -109,10 +111,32 @@ export default {
       }
     },
     storeProfile() {
-      localStorage.setItem('prof', JSON.stringify(this.profile))
+      if (!this.holdStore) {
+        localStorage.setItem('prof', JSON.stringify(this.profile))
+      }
     },
-    storeMonths() {
-      localStorage.setItem('months', JSON.stringify(this.months))
+    async storeMonths() {
+      if (!this.holdStore) {
+        await this.optimizeMonthsStore()
+        localStorage.setItem('months', JSON.stringify(this.months))
+      }
+    },
+    async optimizeMonthsStore() {
+      this.holdStore = true
+      for (let i = 0; i < this.months.length; i++) {
+        const month = this.months[i];
+        const dates = month.d;
+        for (const key in dates) {
+          if (Object.hasOwn(dates, key)) {
+            const day = dates[key];
+
+            if (day.p == '' && day.a == '' && day.n == '') {
+              delete dates[key];
+            }
+          }
+        }
+      }
+      this.holdStore = false
     },
     async getStored(key) {
       const v = localStorage.getItem(key)
@@ -126,6 +150,10 @@ export default {
 
       localStorage.removeItem('prof')
       localStorage.removeItem('months')
+    },
+    async restoreBackup(data) {
+      this.profile = data.profile
+      this.months = data.months
     }
   },
   provide() {

@@ -1,9 +1,7 @@
 <template>
-    <div class="hrs plan" v-show="showPlan">
-        {{ day.p }}
+    <div class="hrs plan" v-html="htmlPlan" v-show="showPlan" >
     </div>
-    <div class="hrs actual">
-        {{ day.a }}
+    <div class="hrs actual" v-html="htmlActual">
     </div>
 </template>
 
@@ -15,6 +13,12 @@ export default {
     computed: {
         showPlan() {
             return this.day.p > 0 && (this.day.a == 0 || this.day.a == '') 
+        },
+        htmlPlan() {
+            return this.day.p + ((this.day.p) ? `<span style='font-weight: 400; font-size: 14px'>h</span>` : '')
+        },
+        htmlActual() {
+            return this.day.a + ( this.day.a ? `<span style='font-weight: 400; font-size: 14px'>h</span>` : '')
         }
     }
 }
@@ -30,6 +34,11 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.hrs-h {
+    font-weight: 200;
+    color: red;
 }
 
 .plan

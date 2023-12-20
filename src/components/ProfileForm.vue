@@ -23,34 +23,100 @@
                 </div>
             </div>
         </div>
-        <div class="reset">
-            <button @click="$emit('storeReset')">Reset All</button>
+
+        <div class="actions">
+            <div class="backup">
+                <button @click="backup">Create Backup</button>
+            </div>
+            <div class="restore">
+                <input type="file" id="fileInput" @change="restore" ref="fileInput" hidden />
+                <label for="fileInput" class="button-style">Restore Backup</label>
+            </div>
+            <div class="reset">
+                <button @click="$emit('storeReset')">Reset All</button>
+            </div>
         </div>
     </div>
 </template>
 
 <script>
 export default {
+    data() {
+        return {
+            backupData: null,
+        }
+    },
     props: {
         profile: Object,
+        months: Array,
     },
     computed: {
         hasValidProfile() {
             return this.profile.name && this.profile.rank
+        }
+    },
+    methods: {
+        async backup() {
+            // how to make this promise and only execute the rest of the code after this is resolved
+            await this.$emit('optimizeStore');
+
+            const data = {
+                profile: this.profile,
+                months: this.months,
+            }
+            const filename = 'planner_backup.json'
+            const json = JSON.stringify(data, null, 2)
+            const blob = new Blob([json], { type: 'application/json' })
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        },
+        async restore(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.readAsText(file, "UTF-8");
+                reader.onload = (e) => {
+                    try {
+                        this.backupData = JSON.parse(e.target.result);
+                    } catch (error) {
+                        alert("Error parsing JSON file");
+                    }
+                };
+                reader.onerror = () => {
+                    alert("Error reading the file");
+                };
+            }
+        },
+        async loadBackup() {
+            await this.$emit('backup', this.backupData)
+            alert("Backup Restored!");
+        }
+    }, 
+    watch: {
+        'backupData': {
+            handler: 'loadBackup',
+            deep: true,
         }
     }
 }
 </script>
 
 <style scoped>
-
-.profile {
+.profile
+{
     display: flex;
     flex-flow: column;
     height: 85dvh;
     justify-content: space-between;
     padding-bottom: 50px;
 }
+
 .content
 {
     padding-top: 50px;
@@ -91,12 +157,43 @@ export default {
     height: 30px;
 }
 
+.actions
+{
+    display: flex;
+    gap: 20px;
+    flex-flow: column;
+}
+
+.backup button,
+.restore label,
 .reset button
 {
-    background: #720b0b;
     color: white;
     border-radius: 5px;
     width: 80%;
     outline: none;
+
+}
+
+.backup button
+{
+    background: #333394;
+}
+
+.restore label
+{
+    display: inline-block;
+    background: #333394;
+    padding: 12px 0;
+}
+
+.reset button
+{
+    background: #720b0b;
+}
+
+input[type="file"]
+{
+    display: none;
 }
 </style>

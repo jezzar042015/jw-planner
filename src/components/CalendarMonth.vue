@@ -200,7 +200,7 @@ export default {
 {
     height: 20px;
     font-weight: 600;
-    background: darkslategray;
+    background: rgb(4, 33, 110);
     color: white;
     padding: 10px;
     text-align: center;
